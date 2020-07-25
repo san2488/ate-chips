@@ -3,6 +3,7 @@ extern crate minifb;
 
 use std::process;
 use std::fs::File;
+use std::fs;
 use std::io::prelude::*;
 use std::io::BufReader;
 use bit_vec::BitVec;
@@ -125,7 +126,6 @@ impl Chip8 {
             0xF000 => {
                 let reg = ((self.opcode & 0x0F00) >> 8) as usize;
                 let hex = self.v[reg];
-                println!("hex: 0x{:04x}", hex);
                 match hex {
                     0 => self.i = 0x0000,
                     1 => self.i = 0x0005,
@@ -181,6 +181,12 @@ impl Chip8 {
             self.memory[0x200 + 2 * i + 1] = (c & 0x00FF) as u8;
         }
     }
+
+    fn load_rom(&mut self, program: &Vec<u8>) {
+        for (i, &c) in program.iter().enumerate() {
+            self.memory[0x200 + i] = c
+        }
+    }
 }
 
 fn from_u8_gray(g: u8) -> u32 {
@@ -190,18 +196,11 @@ fn from_u8_gray(g: u8) -> u32 {
 
 fn main() {
     let mut chip8 = Chip8::new();
-    let file = File::open("programs/mictest-123.txt").expect("Unable to open file");
-    let reader = BufReader::new(file);
-    let program: Vec<u16> = reader.lines()
-        .map(|l| l.expect("Could not parse line"))
-        .flat_map(|l| l.split_whitespace().skip(1).map(String::from).collect::<Vec<String>>())
-        .map(|c| u16::from_str_radix(&c, 16).unwrap())
-        .collect();
-    println!("{:04x?}", program);
+    let program: Vec<u8> = fs::read("programs/mictest-123.rom").expect("Unable to open file");
 
     chip8.init_mem();
 
-    chip8.load(&program);
+    chip8.load_rom(&program);
 
     let mut window = match Window::new(
         "CHIP-8 - ESC to exit",
