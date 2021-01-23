@@ -1,16 +1,14 @@
 extern crate bit_vec;
 extern crate minifb;
 
-use std::process;
-use std::fs::File;
+
 use std::fs;
-use std::io::prelude::*;
-use std::io::BufReader;
 use bit_vec::BitVec;
 use minifb::{Key, Scale, Window, WindowOptions};
 
 const WIDTH: usize = 64;
 const HEIGHT: usize = 32;
+const PROGRAM_START: usize = 0x200;
 
 struct Chip8 {
     memory: [u8; 4096],
@@ -36,7 +34,7 @@ impl Chip8 {
             gfx: [0x000; WIDTH / 8 * HEIGHT],
             v: [0; 16],
             stack: [0; 16],
-            pc: 0x200,
+            pc: PROGRAM_START as u16,
             i: 0x0000,
         }
     }
@@ -72,6 +70,90 @@ impl Chip8 {
         interp_mem[start + 3 * sprite_ht + 2] = 0xF0;
         interp_mem[start + 3 * sprite_ht + 3] = 0x10;
         interp_mem[start + 3 * sprite_ht + 4] = 0xF0;
+
+        // 4
+        interp_mem[start + 4 * sprite_ht + 0] = 0x90;
+        interp_mem[start + 4 * sprite_ht + 1] = 0x90;
+        interp_mem[start + 4 * sprite_ht + 2] = 0xF0;
+        interp_mem[start + 4 * sprite_ht + 3] = 0x10;
+        interp_mem[start + 4 * sprite_ht + 4] = 0x10;
+
+        // 5
+        interp_mem[start + 5 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 5 * sprite_ht + 1] = 0x80;
+        interp_mem[start + 5 * sprite_ht + 2] = 0xF0;
+        interp_mem[start + 5 * sprite_ht + 3] = 0x10;
+        interp_mem[start + 5 * sprite_ht + 4] = 0xF0;
+
+        // 6
+        interp_mem[start + 6 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 6 * sprite_ht + 1] = 0x80;
+        interp_mem[start + 6 * sprite_ht + 2] = 0xF0;
+        interp_mem[start + 6 * sprite_ht + 3] = 0x90;
+        interp_mem[start + 6 * sprite_ht + 4] = 0xF0;
+
+        // 7
+        interp_mem[start + 7 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 7 * sprite_ht + 1] = 0x10;
+        interp_mem[start + 7 * sprite_ht + 2] = 0x20;
+        interp_mem[start + 7 * sprite_ht + 3] = 0x40;
+        interp_mem[start + 7 * sprite_ht + 4] = 0x40;
+
+        // 8
+        interp_mem[start + 8 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 8 * sprite_ht + 1] = 0x90;
+        interp_mem[start + 8 * sprite_ht + 2] = 0xF0;
+        interp_mem[start + 8 * sprite_ht + 3] = 0x90;
+        interp_mem[start + 8 * sprite_ht + 4] = 0xF0;
+
+        // 9
+        interp_mem[start + 9 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 9 * sprite_ht + 1] = 0x90;
+        interp_mem[start + 9 * sprite_ht + 2] = 0xF0;
+        interp_mem[start + 9 * sprite_ht + 3] = 0x10;
+        interp_mem[start + 9 * sprite_ht + 4] = 0xF0;
+
+        // 10
+        interp_mem[start + 10 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 10 * sprite_ht + 1] = 0x90;
+        interp_mem[start + 10 * sprite_ht + 2] = 0xF0;
+        interp_mem[start + 10 * sprite_ht + 3] = 0x90;
+        interp_mem[start + 10 * sprite_ht + 4] = 0x90;
+
+        // 11
+        interp_mem[start + 11 * sprite_ht + 0] = 0xE0;
+        interp_mem[start + 11 * sprite_ht + 1] = 0x90;
+        interp_mem[start + 11 * sprite_ht + 2] = 0xE0;
+        interp_mem[start + 11 * sprite_ht + 3] = 0x90;
+        interp_mem[start + 11 * sprite_ht + 4] = 0xE0;
+
+        // 12
+        interp_mem[start + 12 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 12 * sprite_ht + 1] = 0x80;
+        interp_mem[start + 12 * sprite_ht + 2] = 0x80;
+        interp_mem[start + 12 * sprite_ht + 3] = 0x80;
+        interp_mem[start + 12 * sprite_ht + 4] = 0xF0;
+
+        // 13
+        interp_mem[start + 13 * sprite_ht + 0] = 0xE0;
+        interp_mem[start + 13 * sprite_ht + 1] = 0x90;
+        interp_mem[start + 13 * sprite_ht + 2] = 0x90;
+        interp_mem[start + 13 * sprite_ht + 3] = 0x90;
+        interp_mem[start + 13 * sprite_ht + 4] = 0xE0;
+
+        // 14
+        interp_mem[start + 14 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 14 * sprite_ht + 1] = 0x80;
+        interp_mem[start + 14 * sprite_ht + 2] = 0xF0;
+        interp_mem[start + 14 * sprite_ht + 3] = 0x80;
+        interp_mem[start + 14 * sprite_ht + 4] = 0xF0;
+
+        // 15
+        interp_mem[start + 15 * sprite_ht + 0] = 0xF0;
+        interp_mem[start + 15 * sprite_ht + 1] = 0x80;
+        interp_mem[start + 15 * sprite_ht + 2] = 0xF0;
+        interp_mem[start + 15 * sprite_ht + 3] = 0x80;
+        interp_mem[start + 15 * sprite_ht + 4] = 0x80;
     }
 
     fn run(&mut self) {
@@ -83,6 +165,7 @@ impl Chip8 {
                 } else if self.opcode == 0x00EE {
                     self.pc = self.stack[self.sp as usize];
                     self.sp -= 1;
+                    self.pc += 0x0002;
                 }
             }
             0x1000 => {
@@ -106,7 +189,7 @@ impl Chip8 {
                 self.pc += 0x0002;
             }
             0x5000 => {
-                if self.v[(self.opcode & 0x0F00) as usize >> 8] == self.v[((self.opcode & 0x00F0) as usize >> 4)]{
+                if self.v[(self.opcode & 0x0F00) as usize >> 8] == self.v[(self.opcode & 0x00F0) as usize >> 4]{
                     self.pc += 0x0002;
                 }
                 self.pc += 0x0002;
@@ -116,7 +199,8 @@ impl Chip8 {
                 self.pc += 0x0002;
             }
             0x7000 => {
-                self.v[(self.opcode & 0x0F00) as usize >> 8] += (self.opcode & 0x00FF) as u8;
+                let v_x = (self.opcode & 0x0F00) as usize >> 8;
+                self.v[v_x] = self.v[v_x].wrapping_add((self.opcode & 0x00FF) as u8);
                 self.pc += 0x0002;
             }
             0x8000 => {
@@ -179,12 +263,18 @@ impl Chip8 {
                 let y: usize = self.v[(self.opcode & 0x00F0) as usize >> 4] as usize;
                 let display_width = WIDTH / 8;
                 for i in 0..sprite_height {
-                    let gfx_index = display_width * (i + y) + x;
-                    println!("x,y,idx: {:04x},{:04x},{:04x}", x, y, gfx_index);
-                    let old_display = self.gfx[gfx_index];
-                    let new_display = self.gfx[gfx_index] ^ self.memory[sprite_start + i];
+                    let gfx_index_1 = display_width * (i + y) + x / 8;
+                    let gfx_index_2 = (gfx_index_1 + 1) % 8 + (display_width * (i + y));
+                    // println!("x,y,idx: {:04x},{:04x},{:04x}", x, y, gfx_index);
+                    let old_display_1 = self.gfx[gfx_index_1];
+                    let old_display_2 = self.gfx[gfx_index_2];
+                    let sprite_1 = self.memory[sprite_start + i] >> (x % 8);
+                    let sprite_2 = ((self.memory[sprite_start + i] as u16) << (8 - (x % 8))) as u8;
+                    let new_display_1 = self.gfx[gfx_index_1] ^ sprite_1;
+                    let new_display_2 = self.gfx[gfx_index_2] ^ sprite_2;
                     // set byte of the display to sprite byte
-                    self.gfx[gfx_index] = new_display;
+                    self.gfx[gfx_index_1] = new_display_1;
+                    self.gfx[gfx_index_2] = new_display_2;
                     // set VF only if any of the pixels are unset
                     // conjunction of old value with negation of new value is non-zero if any bits are flipped
                     /*
@@ -193,7 +283,7 @@ impl Chip8 {
                         1   &   !0    1
                         1   &   !1    0
                     */
-                    self.v[0xF] = if old_display & !new_display > 0 {
+                    self.v[0xF] = if (old_display_1 & !new_display_1 > 0) || (old_display_2 & !new_display_2 > 0) {
                         0x001
                     } else {
                         0x000
@@ -204,48 +294,62 @@ impl Chip8 {
             0xF000 => {
                 let reg = (self.opcode & 0x0F00) as usize >> 8;
                 match self.opcode & 0x00FF {
-                    0x07 => {
+                    0x0007 => {
                         self.v[reg] = self.delay_timer;
                     }
-                    0x0A => {
+                    0x000A => {
                         
                     }
-                    0x15 => {
+                    0x0015 => {
                         self.delay_timer = self.v[reg];
                     }
-                    0x18 => {
+                    0x0018 => {
                         self.sound_timer = self.v[reg];
                     }
-                    0x1E => {
+                    0x001E => {
                         self.i += self.v[reg] as u16;
                     }
-                    0x29 => {
+                    0x0029 => {
                         let hex = self.v[reg];
                         match hex {
-                            0 => self.i = 0x0000,
-                            1 => self.i = 0x0005,
-                            2 => self.i = 0x000A,
-                            3 => self.i = 0x000F,
+                            0x0 => self.i = 0x0000,
+                            0x1 => self.i = 0x0005,
+                            0x2 => self.i = 0x000A,
+                            0x3 => self.i = 0x000F,
+                            0x4 => self.i = 0x0014,
+                            0x5 => self.i = 0x0019,
+                            0x6 => self.i = 0x001E,
+                            0x7 => self.i = 0x0023,
+                            0x8 => self.i = 0x0028,
+                            0x9 => self.i = 0x002D,
+                            0xA => self.i = 0x0032,
+                            0xB => self.i = 0x0037,
+                            0xC => self.i = 0x003C,
+                            0xD => self.i = 0x0041,
+                            0xE => self.i = 0x0046,
+                            0xF => self.i = 0x004B,
                             _ => panic!("Expecting value [0-15] at v{}, found 0x{:04x}", reg, hex)
                         }
                     }
-                    0x33 => {
+                    0x0033 => {
                         let v = self.v[reg];
                         self.memory[self.i as usize] = v / 100;
                         self.memory[self.i as usize + 1] = (v % 100) / 10;
                         self.memory[self.i as usize + 2] = v % 10;
                     }
-                    0x55 => {
+                    0x0055 => {
                         for i in 0..(self.opcode & 0x0F00 >> 8) {
                             self.memory[(self.i + i) as usize] = self.v[i as usize];
                         }
                     }
-                    0x65 => {
-                        for i in 0..(self.opcode & 0x0F00 >> 8) {
+                    0x0065 => {
+                        let x = self.opcode & 0x0F00 >> 8;
+                        for i in 0..x {
                             self.v[i as usize] = self.memory[(self.i + i) as usize];
                         }
+                        self.i += x + 1;
                     }
-                    _ => panic!("")
+                    _ => panic!("Opcode not implemented: {:04x}", self.opcode)
                 }
                 self.pc += 0x0002;
             }
@@ -261,7 +365,7 @@ impl Chip8 {
         let display_width = 8;
         let mut color_buffer: Vec<u32> = Vec::with_capacity(WIDTH * HEIGHT);
         for i in 0..32 {
-            let mut row = BitVec::from_bytes(&[
+            let row = BitVec::from_bytes(&[
                 self.gfx[display_width * i + 0],
                 self.gfx[display_width * i + 1],
                 self.gfx[display_width * i + 2],
@@ -286,16 +390,9 @@ impl Chip8 {
             .unwrap();
     }
 
-    fn load(&mut self, program: &Vec<u16>) {
-        for (i, &c) in program.iter().enumerate() {
-            self.memory[0x200 + 2 * i] = (c >> 8) as u8;
-            self.memory[0x200 + 2 * i + 1] = (c & 0x00FF) as u8;
-        }
-    }
-
     fn load_rom(&mut self, program: &Vec<u8>) {
         for (i, &c) in program.iter().enumerate() {
-            self.memory[0x200 + i] = c
+            self.memory[PROGRAM_START + i] = c
         }
     }
 }
@@ -307,7 +404,7 @@ fn from_u8_gray(g: u8) -> u32 {
 
 fn main() {
     let mut chip8 = Chip8::new();
-    let program: Vec<u8> = fs::read("programs/c8_test.rom").expect("Unable to open file");
+    let program: Vec<u8> = fs::read("programs/cycle-numbers.rom").expect("Unable to open file");
 
     chip8.init_mem();
 
@@ -353,15 +450,15 @@ mod tests {
 
         chip8.run();
 
+        assert_eq!(chip8.pc, 0x0204);
+
+        chip8.opcode = 0x4123;
+        chip8.v[1] = 0x22;
+        chip8.pc = 0x0202;
+
+        chip8.run();
+
         assert_eq!(chip8.pc, 0x0206);
-
-        // chip8.opcode = 0x4122;
-        // chip8.v[1] = 0x23;
-        // chip8.pc = 0x0202;
-
-        // chip8.run();
-
-        // assert_eq!(chip8.pc, 0x0204);
 
     }
 
@@ -369,8 +466,38 @@ mod tests {
     fn test_3xxx() {
         let mut chip8 = Chip8::new();
         chip8.init_mem();
-        chip8.opcode = 0x4123;
+        chip8.opcode = 0x3123;
         chip8.v[1] = 0x23;
+        chip8.pc = 0x0202;
+
+        chip8.run();
+
+        assert_eq!(chip8.pc, 0x0206);
+
+        chip8.opcode = 0x3123;
+        chip8.v[1] = 0x22;
+        chip8.pc = 0x0202;
+
+        chip8.run();
+
+        assert_eq!(chip8.pc, 0x0204);
+    }
+
+    #[test]
+    fn test_5xxx() {
+        let mut chip8 = Chip8::new();
+        chip8.init_mem();
+        chip8.opcode = 0x5123;
+        chip8.v[1] = 0x23;
+        chip8.v[2] = 0x23;
+        chip8.pc = 0x0202;
+
+        chip8.run();
+
+        assert_eq!(chip8.pc, 0x0206);
+        chip8.opcode = 0x5123;
+        chip8.v[1] = 0x23;
+        chip8.v[2] = 0x22;
         chip8.pc = 0x0202;
 
         chip8.run();
